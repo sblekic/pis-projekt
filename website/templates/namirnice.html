@@ -5,6 +5,7 @@
     <div class="row">
         <h1>Zaprimanje namirnica</h1>
     </div>
+    <!-- Dodaj namirnicu modal -->
     <div class="mt-3">
         <!-- Button trigger modal -->
         <button type="button"
@@ -38,7 +39,7 @@
                                        class="form-control"
                                        id="imeNamirnice"
                                        name="imeNamirnice">
-                                {# moram imati name da mogu onda koristiti podatke na backendu #}
+                                {# moram imati name da mogu onda dohvatiti podatke za spremanje u bp #}
                             </div>
                         </form>
                     </div>
@@ -49,5 +50,11 @@
                 </div>
             </div>
         </div>
+    </div>
+    <div class="mt-5">
+        <h1>Stanje namirnica</h1>
+        <ul class="list-group list-group-flush" id="notes">
+            {% for d in data %}<li class="list-group-item">{{ d.ime_namirnice }}</li>{% endfor %}
+        </ul>
     </div>
 {% endblock %}
