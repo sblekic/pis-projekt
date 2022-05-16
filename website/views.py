@@ -19,6 +19,7 @@ def namirnice():
         ime_namirnice = request.form.get('imeNamirnice')
         Namirnica(ime_namirnice=ime_namirnice)
 
-    namirnica_db = orm.select(x for x in Namirnica)[:]
+    namirnica_db = orm.select(x for x in Namirnica).order_by(
+        Namirnica.ime_namirnice)[:]
     # print(test.ime_namirnice)
     return render_template("namirnice.html", data=namirnica_db)
