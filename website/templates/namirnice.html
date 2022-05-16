@@ -9,20 +9,16 @@
     <div class="mt-3">
         <!-- Button trigger modal -->
         <button type="button"
-                class="btn btn-primary"
+                class="btn btn-success"
                 data-bs-toggle="modal"
-                data-bs-target="#staticBackdrop">
-            Unos namirnice
-        </button>
+                data-bs-target="#namModal">Unos namirnice</button>
         <!-- Modal -->
         <div class="modal fade"
-             id="staticBackdrop"
-             data-bs-backdrop="static"
-             data-bs-keyboard="false"
+             id="namModal"
              tabindex="-1"
-             aria-labelledby="staticBackdropLabel"
+             aria-labelledby="namModalLabel"
              aria-hidden="true">
-            <div class="modal-dialog modal-lg">
+            <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="staticBackdropLabel">Unos namirnice</h5>
@@ -32,14 +28,36 @@
                                 aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <form method="POST" id="add-namirnica-form">
-                            <div class="mb-3">
+                        <!-- form za unos -->
+                        <form class="row g-3" method="POST" id="add-namirnica-form">
+                            <!-- namirnica -->
+                            <div class="col-5">
                                 <label for="imeNamirnice" class="form-label">Ime namirnice</label>
                                 <input type="text"
                                        class="form-control"
                                        id="imeNamirnice"
                                        name="imeNamirnice">
-                                {# moram imati name da mogu onda dohvatiti podatke za spremanje u bp #}
+                                <!-- moram imati input name da mogu onda dohvatiti podatke za spremanje u bp -->
+                            </div>
+                            <!-- kolicina nam -->
+                            <div class="col-3">
+                                <label for="stanjeNam" class="form-label">Kolicina</label>
+                                <input class="form-control" id="stanjeNam" name="stanjeNam">
+                            </div>
+                            <!-- mjerna jedinica -->
+                            <div class="col-4">
+                                <label for="inputState" class="form-label">Mjerna jedinica</label>
+                                <select id="inputState" class="form-select" name="mjernaJed">
+                                    <option selected>
+                                        Odaberi...
+                                    </option>
+                                    <option>
+                                        kg
+                                    </option>
+                                    <option>
+                                        l
+                                    </option>
+                                </select>
                             </div>
                         </form>
                     </div>
@@ -58,21 +76,24 @@
             <thead>
                 <tr>
                     <th scope="col">Namirnica</th>
+                    <th scope="col">Stanje</th>
+                    <th scope="col">Mjerna jedinica</th>
+                    <th scope="col">Radnja</th>
                 </tr>
             </thead>
             <tbody>
                 {% for d in data %}
                     <tr>
                         <td>{{ d.ime_namirnice }}</td>
+                        <td>{{ d.stanje_namirnice }}</td>
+                        <td>{{ d.mjerna_jedinica }}</td>
+                        <td>
+                            <button type="button" class="btn btn-success">Azuriraj stanje</button>
+                            <button type="button" class="btn btn-danger" onClick="izbrisiNam({{ d.id }})">Izbrisi</button>
+                        </td>
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
-        {#
-        <h1>Stanje namirnica</h1>
-        <ul class="list-group list-group-flush" id="notes">
-            {% for d in data %}<li class="list-group-item">{{ d.ime_namirnice }}</li>{% endfor %}
-        </ul>
-        #}
     </div>
 {% endblock %}

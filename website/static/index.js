@@ -5,3 +5,13 @@ $(function () {
     $("#add-namirnica-form").submit();
   });
 });
+
+function izbrisiNam(namId) {
+  fetch("/izbrisi-nam", {
+    method: "DELETE",
+    // konverzija js objekta u json kako bih mogao to poslati serveru
+    body: JSON.stringify({ namId: namId }),
+  }).then((_res) => {
+    window.location.href = "/namirnice";
+  });
+}

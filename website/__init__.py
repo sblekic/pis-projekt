@@ -7,6 +7,7 @@ from pony.flask import Pony
 
 def create_app():
     app = Flask(__name__)  # __name__ references this file
+    # flask integration. ako ovo napravim ne moram wrappat views u @db_session
     Pony(app)
     # registriram routes. podijelio sam rute u vise python datoteka pa ih moram negdje spajati
     # .views je shortcut za full path website.views. tocka oznacava current dir
