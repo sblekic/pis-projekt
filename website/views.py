@@ -26,7 +26,7 @@ def namirnice():
     namirnica_db = orm.select(x for x in Namirnica).order_by(
         Namirnica.ime_namirnice)[:]
     # print(test.ime_namirnice)
-    return render_template("namirnice.html", data=namirnica_db)
+    return render_template("namirnice.html", namirnice=namirnica_db)
 
 
 @views.route('/izbrisi-nam', methods=['DELETE'])

@@ -11,17 +11,17 @@
         <button type="button"
                 class="btn btn-success"
                 data-bs-toggle="modal"
-                data-bs-target="#namModal">Unos namirnice</button>
+                data-bs-target="#namModal">Nova namirnica</button>
         <!-- Modal -->
         <div class="modal fade"
              id="namModal"
              tabindex="-1"
              aria-labelledby="namModalLabel"
              aria-hidden="true">
-            <div class="modal-dialog">
+            <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="staticBackdropLabel">Unos namirnice</h5>
+                        <h5 class="modal-title" id="staticBackdropLabel">Nova namirnica</h5>
                         <button type="button"
                                 class="btn-close"
                                 data-bs-dismiss="modal"
@@ -78,22 +78,95 @@
                     <th scope="col">Namirnica</th>
                     <th scope="col">Stanje</th>
                     <th scope="col">Mjerna jedinica</th>
-                    <th scope="col">Radnja</th>
+                    <th class="text-end" scope="col">Radnja</th>
                 </tr>
             </thead>
             <tbody>
-                {% for d in data %}
+                {% for nam in namirnice %}
                     <tr>
-                        <td>{{ d.ime_namirnice }}</td>
-                        <td>{{ d.stanje_namirnice }}</td>
-                        <td>{{ d.mjerna_jedinica }}</td>
-                        <td>
-                            <button type="button" class="btn btn-success">Azuriraj stanje</button>
-                            <button type="button" class="btn btn-danger" onClick="izbrisiNam({{ d.id }})">Izbrisi</button>
+                        <td>{{ nam.ime_namirnice }}</td>
+                        <td>{{ nam.stanje_namirnice }}</td>
+                        <td>{{ nam.mjerna_jedinica }}</td>
+                        <td class="text-end">
+                            <!-- onclick saljem ime specificne nam da mogu popuniti modal bez da opet pristupim bp -->
+                            <button type="button"
+                                    class="btn btn-success"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#editModal{{ nam.ime_namirnice }}">
+                                Azuriraj stanje
+                            </button>
+                            <button type="button"
+                                    class="btn btn-danger"
+                                    onClick="izbrisiNam({{ nam.id }})">Izbrisi</button>
                         </td>
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
+        {% for nam in namirnice %}
+            <!-- promjena stanja nam -->
+            <div class="modal fade"
+                 id="editModal{{ nam.ime_namirnice }}"
+                 tabindex="-1"
+                 aria-labelledby="namStModalLabel"
+                 aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="staticBackdropLabel">Dodavanje kolicine</h5>
+                            <button type="button"
+                                    class="btn-close"
+                                    data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <!-- form za unos -->
+                            <form class="row g-3" method="POST" id="edit-namirnica-form">
+                                <!-- namirnica -->
+                                <div class="col-6">
+                                    <label for="imeNamirnice" class="form-label">Ime namirnice</label>
+                                    <input class="form-control"
+                                           type="text"
+                                           value="{{ nam.ime_namirnice }}"
+                                           aria-label="Disabled input example"
+                                           disabled
+                                           readonly>
+                                </div>
+                                <!-- kolicina nam -->
+                                <div class="col-2">
+                                    <label for="stanjeNam" class="form-label">Stanje</label>
+                                    <input class="form-control"
+                                           type="text"
+                                           value="{{ nam.stanje_namirnice }}"
+                                           aria-label="Disabled input example"
+                                           disabled
+                                           readonly>
+                                </div>
+                                <!-- mjerna jedinica -->
+                                <div class="col-2">
+                                    <label class="form-label">Dodaj na zalihu</label>
+                                    <input type="text" class="form-control" id="novoStanje" name="novoStanje">
+                                </div>
+                                <div class="col-2">
+                                    <label class="form-label">Mjerna jedinica</label>
+                                    <input class="form-control"
+                                           type="text"
+                                           value="{{ nam.mjerna_jedinica }}"
+                                           aria-label="Disabled input example"
+                                           disabled
+                                           readonly>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zatvori</button>
+                            <button id="edit-namirnica" type="submit" class="btn btn-primary">
+                                Dodaj
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
     </div>
 {% endblock %}
