@@ -7,7 +7,7 @@ $(function () {
 });
 
 function izbrisiNam(namId) {
-  fetch("/izbrisi-nam", {
+  fetch("/namirnice/izbrisi-nam", {
     method: "DELETE",
     // konverzija js objekta u json kako bih mogao to poslati serveru
     body: JSON.stringify({ namId: namId }),

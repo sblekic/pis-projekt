@@ -29,7 +29,10 @@
                     </div>
                     <div class="modal-body">
                         <!-- form za unos -->
-                        <form class="row g-3" method="POST" id="add-namirnica-form">
+                        <form action="{{ url_for('views.dodaj_nam')}}"
+                              class="row g-3"
+                              method="POST"
+                              id="add-namirnica-form">
                             <!-- namirnica -->
                             <div class="col-5">
                                 <label for="imeNamirnice" class="form-label">Ime namirnice</label>
@@ -63,7 +66,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zatvori</button>
-                        <button id="submit-namirnica" type="submit" class="btn btn-primary">Dodaj</button>
+                        <button id="submit-namirnica" type="button" class="btn btn-primary">Dodaj</button>
                     </div>
                 </div>
             </div>
@@ -92,7 +95,7 @@
                             <button type="button"
                                     class="btn btn-success"
                                     data-bs-toggle="modal"
-                                    data-bs-target="#editModal{{ nam.ime_namirnice }}">
+                                    data-bs-target="#editModal{{ nam.id }}">
                                 Azuriraj stanje
                             </button>
                             <button type="button"
@@ -104,16 +107,16 @@
             </tbody>
         </table>
         {% for nam in namirnice %}
-            <!-- promjena stanja nam -->
+            <!-- azuriranje stanja -->
             <div class="modal fade"
-                 id="editModal{{ nam.ime_namirnice }}"
+                 id="editModal{{ nam.id }}"
                  tabindex="-1"
                  aria-labelledby="namStModalLabel"
                  aria-hidden="true">
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="staticBackdropLabel">Dodavanje kolicine</h5>
+                            <h5 class="modal-title" id="staticBackdropLabel">Dodavanje kolicine {{ nam.id }}</h5>
                             <button type="button"
                                     class="btn-close"
                                     data-bs-dismiss="modal"
@@ -121,7 +124,10 @@
                         </div>
                         <div class="modal-body">
                             <!-- form za unos -->
-                            <form class="row g-3" method="POST" id="edit-namirnica-form">
+                            <form class="row g-3"
+                                  action="{{ url_for('views.update_nam', nam_id=nam.id)}}"
+                                  method="POST"
+                                  id="edit-namirnica-form">
                                 <!-- namirnica -->
                                 <div class="col-6">
                                     <label for="imeNamirnice" class="form-label">Ime namirnice</label>
@@ -156,13 +162,13 @@
                                            disabled
                                            readonly>
                                 </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zatvori</button>
+                                    <button id="edit-namirnica" type="submit" class="btn btn-primary">
+                                        Azuriraj
+                                    </button>
+                                </div>
                             </form>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zatvori</button>
-                            <button id="edit-namirnica" type="submit" class="btn btn-primary">
-                                Dodaj
-                            </button>
                         </div>
                     </div>
                 </div>
