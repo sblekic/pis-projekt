@@ -2,6 +2,7 @@
 # blueprint mi omogucava podjelu route-ova u više datoteka, da ne moram sve ovdje natrpati
 from flask import Blueprint, redirect, render_template, request, make_response, jsonify, url_for
 from .models import *
+from .procedures import get_jela, get_jelo_by_id
 from pony import orm
 import json
 from decimal import Decimal
@@ -21,7 +22,6 @@ def chart_js():
 @views.route('/')
 def home():
     # za sada koristim za testiranje
-
     return render_template("dashboard.html")
 
 
@@ -66,7 +66,8 @@ def update_nam(nam_id):
 
 @views.route('/normativi', methods=['GET'])
 def normativi():
-    return render_template("normativi.html")
+    jela = get_jela()
+    return render_template("normativi.html", jela=jela)
 
 
 @views.route('/dodaj-jelo', methods=['POST'])
@@ -80,29 +81,12 @@ def dodaj_jelo():
 
 
 @views.route('/normativi/jelo/<int:jelo_id>', methods=['GET'])
-# prikaz "dinamicke" forme
 def normativ_form(jelo_id):
+    # prikaz "dinamicke" forme
+
     namirnica_db = orm.select(x for x in Namirnica).order_by(
         Namirnica.ime_namirnice)[:]
-    # od m:m tablice stvaram dict/json da ne moram pisati upite
-    jela = orm.select(x for x in Jelo)
-    jela = [jelo.to_dict(with_collections=True, related_objects=True)
-            for jelo in jela]
-
-    for jelo in jela:
-        jelo["normativ"] = [normativ.to_dict(
-            only=["id", "namirnica_id", "kolicina_nam"], with_collections=True, related_objects=True) for normativ in jelo["normativ"]]
-
-    for jelo in jela:
-        for normativ in jelo["normativ"]:
-            # print(normativ["namirnica_id"])
-            nam_details = normativ["namirnica_id"].to_dict()
-            # print(nam_details)
-            normativ["namirnica_id"] = nam_details["id"]
-            normativ["mjerna_jedinica"] = nam_details["mjerna_jedinica"]
-            normativ["ime_namirnice"] = nam_details["ime_namirnice"]
-
-    trazeni_el = [element for element in jela if element["id"] == jelo_id]
+    trazeni_el = get_jelo_by_id(jelo_id)
     return render_template("normativi-dodaj.html", namirnice=namirnica_db, jelo=trazeni_el)
 
 
