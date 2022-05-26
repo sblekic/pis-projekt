@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="row">
+        <div class="col-3">
+            <h1>Ime jela: {{ jelo[0]['ime_jela'] }}</h1>
+        </div>
+        <div class="col">
+            <a class="btn btn-warning mt-2"
+               href="{{ url_for('views.normativi')}}"
+               role="button">Dovrsi uredivanje</a>
+        </div>
+    </div>
+    <h5 class="mt-4">Dodavanje normativa</h5>
+    {# {{ jelo[0] }} #}
+    <form action="{{ url_for('views.dodaj_normativ', jelo_id=jelo[0]['id'])}}"
+          class="row g-3 mt-2"
+          method="POST">
+        <div class="row mt-3 align-items-end">
+            <!-- namirnica -->
+            <div class="col-5">
+                <label for="inputState" class="form-label">Namirnica</label>
+                <select id="inputState" class="form-select" name="imeNam">
+                    <option selected>
+                        Odaberi...
+                    </option>
+                    {% for nam in namirnice %}
+                        <option onClick="setMjerna('{{ nam.mjerna_jedinica }}')">
+                            {{ nam.ime_namirnice }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <!-- kolicina nam -->
+            <div class="col-2">
+                <label for="kolNam" class="form-label">Kolicina</label>
+                <input class="form-control" id="kolNam" name="kolNam">
+            </div>
+            <!-- mjerna jedinica -->
+            <div class="col-2">
+                <label class="form-label">Mjerna jedinica</label>
+                <input class="form-control"
+                       id="mjernaJed"
+                       type="text"
+                       aria-label="Disabled input example"
+                       disabled
+                       readonly>
+            </div>
+            <div class="col-2">
+                <button id="submit-namirnica" type="submit" class="btn btn-success">Dodaj</button>
+            </div>
+        </div>
+        {#
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zatvori</button>
+            <button id="submit-namirnica" type="submit" class="btn btn-primary">Dodaj</button>
+        </div>
+        #}
+    </form>
+    <div class="mt-4 mb-5">
+        <h1>Normativi jela</h1>
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">Namirnica</th>
+                    <th scope="col">Kolicina</th>
+                    <th scope="col">Mjerna jedinica</th>
+                    <th class="text-end" scope="col">Radnja</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for nam in jelo[0]["normativ"] %}
+                    <tr>
+                        <td>{{ nam["ime_namirnice"] }}</td>
+                        <td>{{ nam["kolicina_nam"] }}</td>
+                        <td>{{ nam["mjerna_jedinica"] }}</td>
+                        <td class="text-end">
+                            <!-- onclick saljem ime specificne nam da mogu popuniti modal bez da opet pristupim bp -->
+                            <button type="button" class="btn btn-success" data-bs-toggle="modal">Azuriraj stanje</button>
+                            <button type="button" class="btn btn-danger">Izbrisi</button>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

@@ -1,3 +1,16 @@
 {% extends "base.html" %}
 {# stranica koja ce prvo prikazati, nekakav dashboard sa informacijama o stanju namirnica #}
-{% block content %}<h1>ovo ce biti dashboard</h1>{% endblock %}
+{% block content %}
+    <h1>
+        ovo ce biti dashboard
+        {% for item in jela %}
+            {% for norm in item["normativ"] %}
+                <p>
+                    {{ norm["ime_namirnice"] }}
+                </p>
+            {% endfor %}
+        {% else %}
+        {% endfor %}
+        {# {{ jela[0] }} #}
+    </h1>
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block content %}
+    <h1>Pregled normativa</h1>
+    <p>
+        dodaj if block, ako nema normativa prikazi tekst nema normativa klikni na gumb
+    </p>
+    <!-- Button trigger modal -->
+    <button type="button"
+            class="btn btn-success"
+            data-bs-toggle="modal"
+            data-bs-target="#exampleModal">
+        Dodaj normativ
+    </button>
+    <!-- Modal -->
+    <div class="modal fade"
+         id="exampleModal"
+         tabindex="-1"
+         aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Dodavanje normativa</h5>
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="{{ url_for('views.dodaj_jelo')}}" method="POST">
+                        <div class="mb-3">
+                            <label for="imeJela" class="form-label">Ime jela</label>
+                            <input type="text"
+                                   class="form-control"
+                                   id="imeJela"
+                                   name="imeJela"
+                                   aria-describedby="jeloHelp">
+                            <div id="jeloHelp" class="form-text">Upisite ime jela te kliknite nastavi za definiranje normativa.</div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">Nastavi</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

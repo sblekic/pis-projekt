@@ -1,8 +1,11 @@
 # this file makes the website folder a python package = i can use the import syntax
 # every time i import the website folder it will run whatever is defined here
 from flask import Flask
+
 from .models import db
 from pony.flask import Pony
+
+from pony import orm
 
 
 def create_app():

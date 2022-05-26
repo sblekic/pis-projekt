@@ -1,7 +1,7 @@
 # views/url endpoints
 # blueprint mi omogucava podjelu route-ova u više datoteka, da ne moram sve ovdje natrpati
 from flask import Blueprint, redirect, render_template, request, make_response, jsonify, url_for
-from .models import Namirnica
+from .models import *
 from pony import orm
 import json
 from decimal import Decimal
@@ -9,14 +9,26 @@ from decimal import Decimal
 views = Blueprint('views', __name__)
 
 
+@views.route('/chartJs')
+def chart_js():
+    # testiram vizualizaciju iz chartjs-a
+    x = ['assigned', 'closed', 'new']
+    y = [4, 7, 11]
+    z = 69
+    return render_template("chart-js.html", x=x, y=y, z=z)
+
+
 @views.route('/')
 def home():
+    # za sada koristim za testiranje
+
     return render_template("dashboard.html")
 
 
 @views.route('/namirnice', methods=['GET'])
 def namirnice():
     # prikaz namirnica. sortirano abecedno po imenu
+    # Jelo(ime_jela="rizoto")
     namirnica_db = orm.select(x for x in Namirnica).order_by(
         Namirnica.ime_namirnice)[:]
     return render_template("namirnice.html", namirnice=namirnica_db)
@@ -50,3 +62,56 @@ def update_nam(nam_id):
     dodaj_na_zal = request.form.get('novoStanje')
     Namirnica[nam_id].stanje_namirnice += Decimal(dodaj_na_zal)
     return redirect(url_for(".namirnice"))
+
+
+@views.route('/normativi', methods=['GET'])
+def normativi():
+    return render_template("normativi.html")
+
+
+@views.route('/dodaj-jelo', methods=['POST'])
+def dodaj_jelo():
+    ime_jela = request.form.get('imeJela')
+    is_jelo = Jelo.select(lambda x: x.ime_jela == ime_jela)[:]
+    if not is_jelo:
+        Jelo(ime_jela=ime_jela)
+    id_jela = Jelo.select(lambda x: x.ime_jela == ime_jela)[:][0].id
+    return redirect(f'/normativi/jelo/{id_jela}')
+
+
+@views.route('/normativi/jelo/<int:jelo_id>', methods=['GET'])
+# prikaz "dinamicke" forme
+def normativ_form(jelo_id):
+    namirnica_db = orm.select(x for x in Namirnica).order_by(
+        Namirnica.ime_namirnice)[:]
+    # od m:m tablice stvaram dict/json da ne moram pisati upite
+    jela = orm.select(x for x in Jelo)
+    jela = [jelo.to_dict(with_collections=True, related_objects=True)
+            for jelo in jela]
+
+    for jelo in jela:
+        jelo["normativ"] = [normativ.to_dict(
+            only=["id", "namirnica_id", "kolicina_nam"], with_collections=True, related_objects=True) for normativ in jelo["normativ"]]
+
+    for jelo in jela:
+        for normativ in jelo["normativ"]:
+            # print(normativ["namirnica_id"])
+            nam_details = normativ["namirnica_id"].to_dict()
+            # print(nam_details)
+            normativ["namirnica_id"] = nam_details["id"]
+            normativ["mjerna_jedinica"] = nam_details["mjerna_jedinica"]
+            normativ["ime_namirnice"] = nam_details["ime_namirnice"]
+
+    trazeni_el = [element for element in jela if element["id"] == jelo_id]
+    return render_template("normativi-dodaj.html", namirnice=namirnica_db, jelo=trazeni_el)
+
+
+@views.route("/normativi/dodaj/<int:jelo_id>", methods=['POST'])
+def dodaj_normativ(jelo_id):
+    # preko imena dohvacam id namirnice
+    ime_nam = request.form.get('imeNam')
+    kol_nam = request.form.get('kolNam')
+    id_nam = db.get(
+        "select id from Namirnica where ime_namirnice = $ime_nam")
+    Normativ(jelo_id=jelo_id, namirnica_id=id_nam, kolicina_nam=kol_nam)
+    return redirect(f'/normativi/jelo/{jelo_id}')
