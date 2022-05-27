@@ -2,7 +2,7 @@
 # blueprint mi omogucava podjelu route-ova u više datoteka, da ne moram sve ovdje natrpati
 from flask import Blueprint, redirect, render_template, request, make_response, jsonify, url_for
 from .models import *
-from .procedures import get_jela, get_jelo_by_id
+from .procedures import *
 from pony import orm
 import json
 from decimal import Decimal
@@ -23,39 +23,6 @@ def chart_js():
 def home():
     # za sada koristim za testiranje
     # pravim se da ovdje dobivam requestove
-    narudzbe = orm.select(x for x in Narudzba)
-
-    # view za prikaz narudzbi na front
-
-    # 1 of 2 views za stvaranje nabavne liste
-    narudzbe = [narudzba.to_dict(with_collections=True,
-                                 related_objects=True) for narudzba in narudzbe]
-    for narudzba in narudzbe:
-        narudzba["stavke"] = [stavka.to_dict(only=["jelo_id", "kolicina"], with_collections=True
-                                             ) for stavka in narudzba["stavke"]]
-
-    # lista normativa kao lista dictionary-a, lakse mi je za hendlat
-    normativi_db = orm.select(x for x in Normativ)[:]
-    lista_normativa = [normativ.to_dict() for normativ in normativi_db]
-
-    nabava = []
-    # cilj ovoga je spremiti u var nabava popis potrebnih namirnica za izvrsenje narudzbe
-    # ovo je zamisljeno da racuna kolicinu namirnica za samo jednu narudzbu
-    # da narudzba ima status tek kada je status nesto u stilu approved bi se namirnice makle sa skladista
-    for stavka in narudzba["stavke"]:
-        for normativ in lista_normativa:
-            nd = {}
-            if stavka["jelo_id"] == normativ["jelo_id"]:
-                nd["nam_id"] = normativ["namirnica_id"]
-                nd["kolicina"] = normativ["kolicina_nam"]
-                dict_index = next((index for (index, d) in enumerate(
-                    nabava) if d["nam_id"] == normativ["namirnica_id"]), None)
-                if next((item for item in nabava if item['nam_id'] == normativ["namirnica_id"]), None) is not None:
-                    # ako je pronadena namirnica u dictionary, dodaj kolicinu
-                    nabava[dict_index]["kolicina"] += normativ["kolicina_nam"]
-                else:
-                    nabava.append(nd)
-    print(nabava, "\n")
 
     # n1 = Namirnica(ime_namirnice="sunka", stanje_namirnice=Decimal('5'),
     #                mjerna_jedinica="kg")
@@ -69,7 +36,7 @@ def home():
     return render_template("dashboard.html")
 
 
-@ views.route('/namirnice', methods=['GET'])
+@views.route('/namirnice', methods=['GET'])
 def namirnice():
     # prikaz namirnica. sortirano abecedno po imenu
     namirnica_db = orm.select(x for x in Namirnica).order_by(
@@ -77,7 +44,7 @@ def namirnice():
     return render_template("namirnice.html", namirnice=namirnica_db)
 
 
-@ views.route('/namirnice/dodaj-nam', methods=['POST'])
+@views.route('/namirnice/dodaj-nam', methods=['POST'])
 def dodaj_nam():
     if request.method == 'POST':
         ime_nam = request.form.get('imeNamirnice')
@@ -88,7 +55,7 @@ def dodaj_nam():
     return redirect(url_for(".namirnice"))
 
 
-@ views.route('/namirnice/izbrisi-nam', methods=['DELETE'])
+@views.route('/namirnice/izbrisi-nam', methods=['DELETE'])
 def izbrisi_nam():
     # iz js funkcije dobio json string kojeg moram prvo dekodirati kako bih ga mogao spremiti u varijablu i koristiti
     namirnica = json.loads(request.data)
@@ -100,20 +67,20 @@ def izbrisi_nam():
     return jsonify({})
 
 
-@ views.route('/namirnice/update-nam/<int:nam_id>', methods=['POST'])
+@views.route('/namirnice/update-nam/<int:nam_id>', methods=['POST'])
 def update_nam(nam_id):
     dodaj_na_zal = request.form.get('novoStanje')
     Namirnica[nam_id].stanje_namirnice += Decimal(dodaj_na_zal)
     return redirect(url_for(".namirnice"))
 
 
-@ views.route('/normativi', methods=['GET'])
+@views.route('/normativi', methods=['GET'])
 def normativi():
     jela = get_jela()
     return render_template("normativi.html", jela=jela)
 
 
-@ views.route('/dodaj-jelo', methods=['POST'])
+@views.route('/dodaj-jelo', methods=['POST'])
 def dodaj_jelo():
     ime_jela = request.form.get('imeJela')
     is_jelo = Jelo.select(lambda x: x.ime_jela == ime_jela)[:]
@@ -123,7 +90,7 @@ def dodaj_jelo():
     return redirect(f'/normativi/jelo/{id_jela}')
 
 
-@ views.route('/normativi/jelo/<int:jelo_id>', methods=['GET'])
+@views.route('/normativi/jelo/<int:jelo_id>', methods=['GET'])
 def normativ_form(jelo_id):
     # prikaz "dinamicke" forme
 
@@ -133,7 +100,7 @@ def normativ_form(jelo_id):
     return render_template("normativi-dodaj.html", namirnice=namirnica_db, jelo=trazeni_el)
 
 
-@ views.route("/normativi/dodaj/<int:jelo_id>", methods=['POST'])
+@views.route("/normativi/dodaj/<int:jelo_id>", methods=['POST'])
 def dodaj_normativ(jelo_id):
     # preko imena dohvacam id namirnice
     ime_nam = request.form.get('imeNam')
@@ -144,6 +111,16 @@ def dodaj_normativ(jelo_id):
     return redirect(f'/normativi/jelo/{jelo_id}')
 
 
-@ views.route("/narudzbe")
+@views.route("/narudzbe")
 def narudzbe():
-    return render_template("narudzbe.html")
+    narudzbe = get_narudzbe()
+    # print(narudzbe)
+    return render_template("narudzbe.html", narudzbe=narudzbe)
+
+
+@views.route("/narudzbe/<int:narudzba_id>")
+def detalji_narudzbe(narudzba_id):
+    narudzba = get_narudzba_by_id(narudzba_id)
+    nabava = nabavna_lista_by_narudzba(narudzba)
+    print("\n", narudzba, "\n", nabava)
+    return render_template("detalji-narudzbe.html", narudzba=narudzba, nabava=nabava)

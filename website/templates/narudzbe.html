@@ -1,2 +1,29 @@
 {% extends "base.html" %}
-{% block content %}<h1>cisto da se nesto prikaze na stranici</h1>{% endblock %}
+{% block content %}
+    <h1>Narudzbe</h1>
+    <table class="table table-hover align-middle">
+        <thead>
+            <tr>
+                <th scope="col">Id</th>
+                <th scope="col">Kupac</th>
+                <th scope="col">Kontakt</th>
+                <th scope="col">Kreirano</th>
+                <th scope="col">Radnja</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for narudzba in narudzbe %}
+                <tr>
+                    <th scope="row">{{ narudzba["id"] }}</th>
+                    <td>Otto</td>
+                    <td>otto@mail.com</td>
+                    <td>{{ narudzba["datum_kreiranja"] }}</td>
+                    <td>
+                        <a class="btn btn-primary"
+                           href="{{ url_for('views.detalji_narudzbe', narudzba_id=narudzba['id'])}}">Detalji</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

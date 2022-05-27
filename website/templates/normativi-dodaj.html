@@ -2,7 +2,7 @@
 {% block content %}
     <div class="row">
         <div class="col-3">
-            <h1>Ime jela: {{ jelo[0]['ime_jela'] }}</h1>
+            <h1>Ime jela: {{ jelo['ime_jela'] }}</h1>
         </div>
         <div class="col">
             <a class="btn btn-warning mt-2"
@@ -12,7 +12,7 @@
     </div>
     <h5 class="mt-4">Dodavanje normativa</h5>
     {# {{ jelo[0] }} #}
-    <form action="{{ url_for('views.dodaj_normativ', jelo_id=jelo[0]['id'])}}"
+    <form action="{{ url_for('views.dodaj_normativ', jelo_id=jelo['id'])}}"
           class="row g-3 mt-2"
           method="POST">
         <div class="row mt-3 align-items-end">
@@ -62,7 +62,7 @@
                 </tr>
             </thead>
             <tbody>
-                {% for nam in jelo[0]["normativ"] %}
+                {% for nam in jelo["normativ"] %}
                     <tr>
                         <td>{{ nam["ime_namirnice"] }}</td>
                         <td>{{ nam["kolicina_nam"] }}</td>

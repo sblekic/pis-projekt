@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+    <h1>Detalji narudzbe {{ narudzba["id"] }}imeKupca</h1>
+    {{ nabava }}
+    <table class="table table-hover align-middle">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Stavka</th>
+                <th scope="col">Kolicina</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for stavka in narudzba["stavke"] %}
+                <tr>
+                    <th scope="row">{{ loop.index }}</th>
+                    <td>{{ stavka["ime_jela"] }}</td>
+                    <td>{{ stavka["kolicina"] }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock  %}
