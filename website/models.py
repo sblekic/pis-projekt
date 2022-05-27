@@ -1,6 +1,8 @@
 # storage of database models
 from decimal import Decimal
-from pony.orm import Database, Required, Optional, Set
+from pony.orm import Database, PrimaryKey, Required, Optional, Set
+from datetime import datetime
+from pony.converting import str2datetime
 
 db = Database()
 
@@ -17,9 +19,24 @@ class Namirnica(db.Entity):
 class Jelo(db.Entity):
     ime_jela = Required(str, unique=True)
     normativ = Set('Normativ')
+    stavka_narudzbe = Set('Stavka')
 
 
 class Normativ(db.Entity):
     jelo_id = Required(Jelo)
-    namirnica_id = Required(Namirnica, unique=True)
+    namirnica_id = Required(Namirnica)
     kolicina_nam = Required(Decimal)
+
+
+class Narudzba(db.Entity):
+    id = PrimaryKey(int, auto=True)
+    datum_kreiranja = Required(datetime)
+    stavke = Set('Stavka')
+
+
+class Stavka(db.Entity):
+    # id = PrimaryKey(int, auto=True)
+    narudzba_id = Required(Narudzba)
+    jelo_id = Required(Jelo)
+    kolicina = Required(int)
+    PrimaryKey(narudzba_id, jelo_id)

@@ -2,24 +2,30 @@
 {% block content %}
     <div>
         <h1 class="mb-4">Pregled normativa</h1>
-        <div class="row row-cols-1 row-cols-md-3 g-4 mb-4">
-            {% for jelo in jela %}
-                <div class="col">
-                    <div class="card" style="width: 18rem;">
-                        <div class="card-header">{{ jelo["ime_jela"] }}</div>
-                        <ul class="list-group list-group-flush">
-                            {% for norm in jelo["normativ"] %}
-                                <li class="list-group-item">
-                                    {{ norm["ime_namirnice"] }}
-                                    {{ norm["kolicina_nam"] }}
-                                    {{ norm["mjerna_jedinica"] }}
-                                </li>
-                            {% endfor %}
-                        </ul>
+        {% if jela %}
+            <div class="row row-cols-1 row-cols-md-3 g-4 mb-4">
+                {% for jelo in jela %}
+                    <div class="col">
+                        <div class="card" style="width: 18rem;">
+                            <div class="card-header">{{ jelo["ime_jela"] }}</div>
+                            <ul class="list-group list-group-flush">
+                                {% for norm in jelo["normativ"] %}
+                                    <li class="list-group-item">
+                                        {{ norm["ime_namirnice"] }}
+                                        {{ norm["kolicina_nam"] }}
+                                        {{ norm["mjerna_jedinica"] }}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
                     </div>
-                </div>
-            {% endfor %}
-        </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>
+                Trenutno nema unesenih normativa
+            </p>
+        {% endif %}
     </div>
     <!-- Button trigger modal -->
     <button type="button"
