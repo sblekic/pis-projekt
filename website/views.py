@@ -50,7 +50,7 @@ def dodaj_nam():
         ime_nam = request.form.get('imeNamirnice')
         stanje_nam = request.form.get('stanjeNam')
         mjerna_jed = request.form.get('mjernaJed')
-        Namirnica(ime_namirnice=ime_nam, stanje_namirnice=stanje_nam,
+        Namirnica(ime_namirnice=ime_nam.capitalize(), stanje_namirnice=stanje_nam,
                   mjerna_jedinica=mjerna_jed)
     return redirect(url_for(".namirnice"))
 
@@ -83,6 +83,7 @@ def normativi():
 @views.route('/dodaj-jelo', methods=['POST'])
 def dodaj_jelo():
     ime_jela = request.form.get('imeJela')
+    ime_jela = ime_jela.capitalize()
     is_jelo = Jelo.select(lambda x: x.ime_jela == ime_jela)[:]
     if not is_jelo:
         Jelo(ime_jela=ime_jela)
@@ -114,7 +115,6 @@ def dodaj_normativ(jelo_id):
 @views.route("/narudzbe")
 def narudzbe():
     narudzbe = get_narudzbe()
-    # print(narudzbe)
     return render_template("narudzbe.html", narudzbe=narudzbe)
 
 
@@ -122,5 +122,6 @@ def narudzbe():
 def detalji_narudzbe(narudzba_id):
     narudzba = get_narudzba_by_id(narudzba_id)
     nabava = nabavna_lista_by_narudzba(narudzba)
-    print("\n", narudzba, "\n", nabava)
+    print("\n", "narudzba", narudzba,)
+    print("\n", nabava)
     return render_template("detalji-narudzbe.html", narudzba=narudzba, nabava=nabava)

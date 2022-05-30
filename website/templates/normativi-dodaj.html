@@ -52,29 +52,35 @@
     </form>
     <div class="mt-4 mb-5">
         <h1>Normativi jela</h1>
-        <table class="table table-hover">
-            <thead>
-                <tr>
-                    <th scope="col">Namirnica</th>
-                    <th scope="col">Kolicina</th>
-                    <th scope="col">Mjerna jedinica</th>
-                    <th class="text-end" scope="col">Radnja</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for nam in jelo["normativ"] %}
-                    <tr>
-                        <td>{{ nam["ime_namirnice"] }}</td>
-                        <td>{{ nam["kolicina_nam"] }}</td>
-                        <td>{{ nam["mjerna_jedinica"] }}</td>
-                        <td class="text-end">
-                            <!-- onclick saljem ime specificne nam da mogu popuniti modal bez da opet pristupim bp -->
-                            <button type="button" class="btn btn-success" data-bs-toggle="modal">Azuriraj stanje</button>
-                            <button type="button" class="btn btn-danger">Izbrisi</button>
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        <div class="row">
+            <div class="col-6">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th scope="col">Namirnica</th>
+                            <th scope="col">Kolicina</th>
+                            <th scope="col">Mjerna jedinica</th>
+                            {# <th class="text-end" scope="col">Radnja</th> #}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for nam in jelo["normativ"] %}
+                            <tr>
+                                <td>{{ nam["ime_namirnice"] }}</td>
+                                <td>{{ nam["kolicina_nam"] }}</td>
+                                <td>{{ nam["mjerna_jedinica"] }}</td>
+                                {#
+                                <td class="text-end">
+                                    <!-- onclick saljem ime specificne nam da mogu popuniti modal bez da opet pristupim bp -->
+                                    <button type="button" class="btn btn-success" data-bs-toggle="modal">Azuriraj stanje</button>
+                                    <button type="button" class="btn btn-danger">Izbrisi</button>
+                                </td>
+                                #}
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 {% endblock %}

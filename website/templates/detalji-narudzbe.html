@@ -1,23 +1,49 @@
 {% extends "base.html" %}
 {% block content %}
-    <h1>Detalji narudzbe {{ narudzba["id"] }}imeKupca</h1>
-    {{ nabava }}
-    <table class="table table-hover align-middle">
-        <thead>
-            <tr>
-                <th scope="col">#</th>
-                <th scope="col">Stavka</th>
-                <th scope="col">Kolicina</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for stavka in narudzba["stavke"] %}
-                <tr>
-                    <th scope="row">{{ loop.index }}</th>
-                    <td>{{ stavka["ime_jela"] }}</td>
-                    <td>{{ stavka["kolicina"] }}</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <h1>Detalji narudzbe: {{ narudzba["id"] }}imeKupca</h1>
+    <div class="row mt-4">
+        <div class="col-6">
+            <table class="table table-hover align-middle">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Stavka</th>
+                        <th scope="col">Kolicina</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for stavka in narudzba["stavke"] %}
+                        <tr>
+                            <th scope="row">{{ loop.index }}</th>
+                            <td>{{ stavka["ime_jela"] }}</td>
+                            <td>{{ stavka["kolicina"] }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-5 mt-4">
+            <h1>Potrebne namirnice</h1>
+            <ul class="list-group list-group-flush list-group-numbered">
+                {% for nam in nabava %}
+                    <li class="list-group-item">
+                        {{ nam["ime_nam"] }}
+                        {{ nam["kolicina"] }}
+                        {{ nam["mj_jedinica"] }}
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="col-5 mt-4">
+            <p>
+                {{ nabava }}
+            </p>
+            <ul>
+                <li>dodaj gumb za provjeru stanja</li>
+                <li>gumb otvara modal koji sadrzi tablicu sa zalihom nam, potrebne nam i razlika, tj koliko treba jos kupiti</li>
+            </ul>
+        </div>
+    </div>
 {% endblock  %}

@@ -56,7 +56,8 @@ def nabavna_lista_by_narudzba(narudzba):
     # narudzba = narudzbe[0]
     # lista normativa kao lista dictionary-a, lakse mi je za hendlat
     normativi_db = orm.select(x for x in Normativ)[:]
-    lista_normativa = [normativ.to_dict() for normativ in normativi_db]
+    lista_normativa = [normativ.to_dict(with_collections=True,
+                                        related_objects=True) for normativ in normativi_db]
 
     nabava = []
     # cilj ovoga je spremiti u var nabava popis potrebnih namirnica za izvrsenje narudzbe
@@ -65,14 +66,17 @@ def nabavna_lista_by_narudzba(narudzba):
     for stavka in narudzba["stavke"]:
         for normativ in lista_normativa:
             nd = {}
-            if stavka["jelo_id"] == normativ["jelo_id"]:
-                nd["nam_id"] = normativ["namirnica_id"]
-                nd["kolicina"] = normativ["kolicina_nam"]
+            if stavka["jelo_id"] == normativ["jelo_id"].id:
+                nd["nam_id"] = normativ["namirnica_id"].id
+                nd["ime_nam"] = normativ["namirnica_id"].ime_namirnice
+                nd["kolicina"] = normativ["kolicina_nam"] * stavka["kolicina"]
+                nd["mj_jedinica"] = normativ["namirnica_id"].mjerna_jedinica
                 dict_index = next((index for (index, d) in enumerate(
-                    nabava) if d["nam_id"] == normativ["namirnica_id"]), None)
-                if next((item for item in nabava if item['nam_id'] == normativ["namirnica_id"]), None) is not None:
+                    nabava) if d["nam_id"] == normativ["namirnica_id"].id), None)
+                if next((item for item in nabava if item['nam_id'] == normativ["namirnica_id"].id), None) is not None:
                     # ako je pronadena namirnica u dictionary, dodaj kolicinu
-                    nabava[dict_index]["kolicina"] += normativ["kolicina_nam"]
+                    nabava[dict_index]["kolicina"] += normativ["kolicina_nam"] * \
+                        stavka["kolicina"]
                 else:
                     nabava.append(nd)
     return nabava
