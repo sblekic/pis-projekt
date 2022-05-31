@@ -70,6 +70,7 @@ def nabavna_lista_by_narudzba(narudzba):
                 nd["nam_id"] = normativ["namirnica_id"].id
                 nd["ime_nam"] = normativ["namirnica_id"].ime_namirnice
                 nd["kolicina"] = normativ["kolicina_nam"] * stavka["kolicina"]
+                nd["zaliha"] = normativ["namirnica_id"].stanje_namirnice
                 nd["mj_jedinica"] = normativ["namirnica_id"].mjerna_jedinica
                 dict_index = next((index for (index, d) in enumerate(
                     nabava) if d["nam_id"] == normativ["namirnica_id"].id), None)
@@ -80,3 +81,11 @@ def nabavna_lista_by_narudzba(narudzba):
                 else:
                     nabava.append(nd)
     return nabava
+
+
+def find_nabava_el(nam_id):
+    found = orm.select(x for x in Nabava if x.nam_id.id == nam_id)[:]
+    if found:
+        return True
+    else:
+        return False

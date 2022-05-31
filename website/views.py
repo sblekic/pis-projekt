@@ -30,7 +30,8 @@ def home():
     # j2 = Jelo(ime_jela="tost")
     # no1 = Normativ(jelo_id=j1, namirnica_id=n1, kolicina_nam=Decimal('2'))
     # no2 = Normativ(jelo_id=j2, namirnica_id=n1, kolicina_nam=Decimal('6'))
-    # n1 = Narudzba(datum_kreiranja=str2datetime('2013-03-15 23:15:00'))
+    # n1 = Narudzba(datum_kreiranja=str2datetime(
+    #     '2013-03-15 23:15:00'), status=novo)
     # s1 = Stavka(narudzba_id=n1, jelo_id=j1, kolicina=2)
     # s1 = Stavka(narudzba_id=n1, jelo_id=j2, kolicina=3)
     return render_template("dashboard.html")
@@ -118,10 +119,28 @@ def narudzbe():
     return render_template("narudzbe.html", narudzbe=narudzbe)
 
 
-@views.route("/narudzbe/<int:narudzba_id>")
+@views.route("/narudzbe/<int:narudzba_id>", methods=['GET', 'POST'])
 def detalji_narudzbe(narudzba_id):
     narudzba = get_narudzba_by_id(narudzba_id)
     nabava = nabavna_lista_by_narudzba(narudzba)
-    print("\n", "narudzba", narudzba,)
-    print("\n", nabava)
+    # zaliha = Namirnica
+    # print("\n", "narudzba", narudzba,)
+    # print("\n", nabava)
+    # print("\n", zaliha)
+    if request.method == 'POST':
+        for nam in nabava:
+            nam_id = nam["nam_id"]
+            rez = Namirnica[nam_id].stanje_namirnice - nam["kolicina"]
+            # negativan rezultat mi oznacava manjak nam, dakle zaliha se postavlja na nulu
+            # a nam koja mi fali se dodaje u listu nam za nabavu
+            if rez < 0:
+                Namirnica[nam_id].stanje_namirnice = Decimal("0")
+                if find_nabava_el(nam_id):
+                    Nabava[nam_id].kolicina += abs(rez)
+                else:
+                    Nabava(nam_id=nam_id, kolicina=abs(rez))
+            # ako je rezultat pozitivan oduzmi sa skladista
+            else:
+                Namirnica[nam_id].stanje_namirnice = rez
+        return redirect(f"/narudzbe/{narudzba_id}")
     return render_template("detalji-narudzbe.html", narudzba=narudzba, nabava=nabava)
