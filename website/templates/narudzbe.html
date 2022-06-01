@@ -8,7 +8,8 @@
                 <th scope="col">Kupac</th>
                 <th scope="col">Kontakt</th>
                 <th scope="col">Kreirano</th>
-                <th scope="col">Radnja</th>
+                <th scope="col">Status</th>
+                <th scope="col"></th>
             </tr>
         </thead>
         <tbody>
@@ -18,6 +19,7 @@
                     <td>Otto-hard coded</td>
                     <td>otto@mail.com - hard coded</td>
                     <td>{{ narudzba["datum_kreiranja"] }}</td>
+                    <td>{{ narudzba["status"] }}</td>
                     <td>
                         <a class="btn btn-primary"
                            href="{{ url_for('views.detalji_narudzbe', narudzba_id=narudzba['id'])}}">Detalji</a>

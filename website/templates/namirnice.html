@@ -54,12 +54,11 @@
                                     <option selected>
                                         Odaberi...
                                     </option>
-                                    <option>
-                                        kg
-                                    </option>
-                                    <option>
-                                        l
-                                    </option>
+                                    {% for j in mj %}
+                                        <option>
+                                            {{j}}
+                                        </option>
+                                    {% endfor %}
                                 </select>
                             </div>
                             <div class="modal-footer">

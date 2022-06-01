@@ -1,5 +1,18 @@
 {% extends "base.html" %}
 {% block content %}
+    {% with messages=get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages  %}
+                {% if category == "warning" %}
+                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                        {{ message }} <a href="{{ url_for('views.get_nabava')}}" class="alert-link">dodan u nabavu.</a>
+                    </div>
+                {% else %}
+                    <div class="alert alert-success" role="alert">{{ message }}</div>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
     <h1>Detalji narudzbe: {{ narudzba["id"] }}imeKupca</h1>
     <div class="row mt-4">
         <div class="col-6">
@@ -50,10 +63,12 @@
                     <td></td>
                     <td></td>
                     <td class="text-end">
-                        <button class="btn btn-primary">Zaprimi narudzbu</button>
+                        <form action="/narudzbe/{{ narudzba['id'] }}" method="POST">
+                            <button class="btn btn-primary" type="submit">Zaprimi narudzbu</button>
+                        </form>
                     </td>
                 </tr>
             </tfoot>
         </table>
     </div>
-{% endblock  %}
+{% endblock %}

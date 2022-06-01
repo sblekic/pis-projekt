@@ -1,6 +1,6 @@
 # views/url endpoints
 # blueprint mi omogucava podjelu route-ova u više datoteka, da ne moram sve ovdje natrpati
-from flask import Blueprint, redirect, render_template, request, make_response, jsonify, url_for
+from flask import Blueprint, redirect, render_template, request, make_response, jsonify, url_for, flash
 from .models import *
 from .procedures import *
 from pony import orm
@@ -22,18 +22,7 @@ def chart_js():
 @views.route('/')
 def home():
     # za sada koristim za testiranje
-    # pravim se da ovdje dobivam requestove
 
-    # n1 = Namirnica(ime_namirnice="sunka", stanje_namirnice=Decimal('5'),
-    #                mjerna_jedinica="kg")
-    # j1 = Jelo(ime_jela="pizza")
-    # j2 = Jelo(ime_jela="tost")
-    # no1 = Normativ(jelo_id=j1, namirnica_id=n1, kolicina_nam=Decimal('2'))
-    # no2 = Normativ(jelo_id=j2, namirnica_id=n1, kolicina_nam=Decimal('6'))
-    # n1 = Narudzba(datum_kreiranja=str2datetime(
-    #     '2013-03-15 23:15:00'), status=novo)
-    # s1 = Stavka(narudzba_id=n1, jelo_id=j1, kolicina=2)
-    # s1 = Stavka(narudzba_id=n1, jelo_id=j2, kolicina=3)
     return render_template("dashboard.html")
 
 
@@ -42,7 +31,8 @@ def namirnice():
     # prikaz namirnica. sortirano abecedno po imenu
     namirnica_db = orm.select(x for x in Namirnica).order_by(
         Namirnica.ime_namirnice)[:]
-    return render_template("namirnice.html", namirnice=namirnica_db)
+    mj = mjerne_jedinice
+    return render_template("namirnice.html", namirnice=namirnica_db, mj=mj)
 
 
 @views.route('/namirnice/dodaj-nam', methods=['POST'])
@@ -51,7 +41,7 @@ def dodaj_nam():
         ime_nam = request.form.get('imeNamirnice')
         stanje_nam = request.form.get('stanjeNam')
         mjerna_jed = request.form.get('mjernaJed')
-        Namirnica(ime_namirnice=ime_nam.capitalize(), stanje_namirnice=stanje_nam,
+        Namirnica(ime_namirnice=ime_nam.lower(), stanje_namirnice=stanje_nam,
                   mjerna_jedinica=mjerna_jed)
     return redirect(url_for(".namirnice"))
 
@@ -116,24 +106,31 @@ def dodaj_normativ(jelo_id):
 @views.route("/narudzbe")
 def narudzbe():
     narudzbe = get_narudzbe()
+    print("\n", narudzbe)
     return render_template("narudzbe.html", narudzbe=narudzbe)
+
+
+@views.route("/narudzbe/dolazne", methods=['POST'])
+def in_narudzbe():
+    status = request.get_json()
+    return status
+    # return redirect(url_for(".narudzbe"))
 
 
 @views.route("/narudzbe/<int:narudzba_id>", methods=['GET', 'POST'])
 def detalji_narudzbe(narudzba_id):
     narudzba = get_narudzba_by_id(narudzba_id)
     nabava = nabavna_lista_by_narudzba(narudzba)
-    # zaliha = Namirnica
-    # print("\n", "narudzba", narudzba,)
-    # print("\n", nabava)
-    # print("\n", zaliha)
+
     if request.method == 'POST':
+        no_nam = False
         for nam in nabava:
             nam_id = nam["nam_id"]
             rez = Namirnica[nam_id].stanje_namirnice - nam["kolicina"]
             # negativan rezultat mi oznacava manjak nam, dakle zaliha se postavlja na nulu
             # a nam koja mi fali se dodaje u listu nam za nabavu
             if rez < 0:
+                no_nam = True
                 Namirnica[nam_id].stanje_namirnice = Decimal("0")
                 if find_nabava_el(nam_id):
                     Nabava[nam_id].kolicina += abs(rez)
@@ -142,5 +139,17 @@ def detalji_narudzbe(narudzba_id):
             # ako je rezultat pozitivan oduzmi sa skladista
             else:
                 Namirnica[nam_id].stanje_namirnice = rez
+        if(no_nam):
+            flash("Nedovoljno namirnica na stanju, potreban iznos ",
+                  category="warning")
+        else:
+            flash("Narudzba zaprimljena!", category="success")
+        Narudzba[narudzba_id].status = zaprimljeno
         return redirect(f"/narudzbe/{narudzba_id}")
     return render_template("detalji-narudzbe.html", narudzba=narudzba, nabava=nabava)
+
+
+@views.route("nabava", methods=['GET'])
+def get_nabava():
+    nabava_nam = orm.select(x for x in Nabava)[:]
+    return render_template("nabava.html", nabava_nam=nabava_nam)

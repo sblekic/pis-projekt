@@ -1,5 +1,4 @@
 from website import create_app
-
 app = create_app()
 
 # pokreni server samo ako pokrenem main.py, tj server se nece pokrenuti ako npr

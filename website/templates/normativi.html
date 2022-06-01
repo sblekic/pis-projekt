@@ -20,8 +20,8 @@
                 {% for jelo in jela %}
                     <div class="col">
                         <div class="card" style="width: 18rem;">
-                            <div class="card-header">{{ jelo["ime_jela"] }}</div>
-                            <ul class="list-group list-group-flush">
+                            <h5 class="card-header text-center">{{ jelo["ime_jela"] }}</h5>
+                            <ul class="list-group list-group-flush text-center">
                                 {% for norm in jelo["normativ"] %}
                                     <li class="list-group-item">
                                         {{ norm["ime_namirnice"] }}

@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+    <h1>Nabava namirnica</h1>
+    <div class="row mt-4">
+        <div class="col-6">
+            <table class="table table-hover align-middle">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Namirnica</th>
+                        <th scope="col">Kolicina</th>
+                        <th scope="col">Mjerna jedinica</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for nam in nabava_nam %}
+                        <tr>
+                            <th scope="row">{{ loop.index }}</th>
+                            <td>{{ nam.nam_id.ime_namirnice }}</td>
+                            <td>{{ nam.kolicina }}</td>
+                            <td>{{ nam.nam_id.mjerna_jedinica }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
