@@ -16,8 +16,8 @@
             {% for narudzba in narudzbe %}
                 <tr>
                     <th scope="row">{{ narudzba["id"] }}</th>
-                    <td>Otto-hard coded</td>
-                    <td>otto@mail.com - hard coded</td>
+                    <td>{{ narudzba["kupac"] }}</td>
+                    <td>{{ narudzba["kontakt"] }}</td>
                     <td>{{ narudzba["datum_kreiranja"] }}</td>
                     <td>{{ narudzba["status"] }}</td>
                     <td>

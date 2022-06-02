@@ -36,6 +36,8 @@ class Normativ(db.Entity):
 
 class Narudzba(db.Entity):
     id = PrimaryKey(int, auto=True)
+    kupac = Required(str)
+    kontakt = Required(str)
     datum_kreiranja = Required(datetime)
     status = Required(str)
     stavke = Set('Stavka')

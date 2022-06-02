@@ -112,9 +112,14 @@ def narudzbe():
 
 @views.route("/narudzbe/dolazne", methods=['POST'])
 def in_narudzbe():
-    status = request.get_json()
-    return status
-    # return redirect(url_for(".narudzbe"))
+    json_request = request.get_json()
+    kupac = json_request["kupac"]
+    kontakt = json_request["kontakt"]
+    datum = json_request["datum"]
+    status = json_request["status"]
+    Narudzba(kupac=kupac, kontakt=kontakt,
+             datum_kreiranja=datum, status=status)
+    return jsonify("Success")
 
 
 @views.route("/narudzbe/<int:narudzba_id>", methods=['GET', 'POST'])
@@ -133,9 +138,10 @@ def detalji_narudzbe(narudzba_id):
                 no_nam = True
                 Namirnica[nam_id].stanje_namirnice = Decimal("0")
                 if find_nabava_el(nam_id):
-                    Nabava[nam_id].kolicina += abs(rez)
+                    # zaokruzim na int jer necu kupiti 2.5 komada necega
+                    Nabava[nam_id].kolicina += round(abs(rez))
                 else:
-                    Nabava(nam_id=nam_id, kolicina=abs(rez))
+                    Nabava(nam_id=nam_id, kolicina=round(abs(rez)))
             # ako je rezultat pozitivan oduzmi sa skladista
             else:
                 Namirnica[nam_id].stanje_namirnice = rez
