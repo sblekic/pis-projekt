@@ -1,6 +1,15 @@
 {% extends "base.html" %}
 {% block content %}
-    <h1>Nabava namirnica</h1>
+    <div class="row mb-4 align-bottom">
+        <div class="col-4">
+            <h1>Nabava namirnica</h1>
+        </div>
+        <div class="col">
+            <a class="btn btn-success mt-2"
+               href="{{ url_for('views.narudzbenice')}}"
+               role="button">Nova narudzbenica</a>
+        </div>
+    </div>
     <div class="row mt-4">
         <div class="col-6">
             <table class="table table-hover align-middle">

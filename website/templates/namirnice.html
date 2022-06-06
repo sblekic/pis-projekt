@@ -2,16 +2,34 @@
 {# pregled postojecih i unos namirnica #}
 {% block title %}Namirnice{% endblock %}
 {% block content %}
-    <div class="row">
-        <h1>Zaprimanje namirnica</h1>
+    {#
+    <div class="row mb-4 align-bottom">
+        <div class="col-4">
+            <h1>Nabava namirnica</h1>
+        </div>
+        <div class="col">
+            <a class="btn btn-success mt-2"
+               href="{{ url_for('views.narudzbenice')}}"
+               role="button">Nova narudzbenica</a>
+        </div>
+    </div>
+    #}
+    <div class="row mb-4">
+        <div class="col-5">
+            <h1>Zaprimanje namirnica</h1>
+        </div>
+        <div class="col">
+            <!-- Button trigger modal -->
+            <button type="button"
+                    class="btn btn-success mt-2"
+                    data-bs-toggle="modal"
+                    data-bs-target="#namModal">
+                Nova namirnica
+            </button>
+        </div>
     </div>
     <!-- Dodaj namirnicu modal -->
     <div class="mt-3">
-        <!-- Button trigger modal -->
-        <button type="button"
-                class="btn btn-success"
-                data-bs-toggle="modal"
-                data-bs-target="#namModal">Nova namirnica</button>
         <!-- Modal -->
         <div class="modal fade"
              id="namModal"
@@ -39,19 +57,20 @@
                                 <input type="text"
                                        class="form-control"
                                        id="imeNamirnice"
-                                       name="imeNamirnice">
+                                       name="imeNamirnice"
+                                       required>
                                 <!-- moram imati input name da mogu onda dohvatiti podatke za spremanje u bp -->
                             </div>
                             <!-- kolicina nam -->
                             <div class="col-3">
                                 <label for="stanjeNam" class="form-label">Kolicina</label>
-                                <input class="form-control" id="stanjeNam" name="stanjeNam">
+                                <input class="form-control" id="stanjeNam" name="stanjeNam" required>
                             </div>
                             <!-- mjerna jedinica -->
                             <div class="col-4">
                                 <label for="inputState" class="form-label">Mjerna jedinica</label>
-                                <select id="inputState" class="form-select" name="mjernaJed">
-                                    <option selected>
+                                <select id="inputState" class="form-select" name="mjernaJed" required>
+                                    <option value="" selected>
                                         Odaberi...
                                     </option>
                                     {% for j in mj %}
@@ -115,7 +134,7 @@
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="staticBackdropLabel">Dodavanje kolicine {{ nam.id }}</h5>
+                            <h5 class="modal-title" id="staticBackdropLabel">Dodavanje kolicine</h5>
                             <button type="button"
                                     class="btn-close"
                                     data-bs-dismiss="modal"
@@ -149,11 +168,17 @@
                                 </div>
                                 <div class="col-2">
                                     <label class="form-label">Dodaj na zalihu</label>
-                                    <input type="text" class="form-control" id="novoStanje" name="novoStanje">
+                                    <input type="text"
+                                           class="form-control"
+                                           id="novoStanje"
+                                           name="novoStanje"
+                                           required>
                                 </div>
                                 <!-- mjerna jedinica -->
                                 <div class="col-2">
-                                    <label class="form-label">Mjerna jedinica</label>
+                                    <label class="form-label">
+                                        Mjerna jedinica
+                                    </label>
                                     <input class="form-control"
                                            type="text"
                                            value="{{ nam.mjerna_jedinica }}"
@@ -162,7 +187,9 @@
                                            readonly>
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zatvori</button>
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                        Zatvori
+                                    </button>
                                     <button id="edit-namirnica" type="submit" class="btn btn-primary">
                                         Azuriraj
                                     </button>

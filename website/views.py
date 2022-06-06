@@ -6,6 +6,8 @@ from .procedures import *
 from pony import orm
 import json
 from decimal import Decimal
+import pdfkit
+import random
 
 views = Blueprint('views', __name__)
 
@@ -159,3 +161,65 @@ def detalji_narudzbe(narudzba_id):
 def get_nabava():
     nabava_nam = orm.select(x for x in Nabava)[:]
     return render_template("nabava.html", nabava_nam=nabava_nam)
+
+
+@views.route("narudzbenice", methods=['GET'])
+def narudzbenice():
+    nam = orm.select(x for x in Nabava)[:]
+    dobavljaci = orm.select(x for x in Dobavljac)[:]
+    return render_template("narudzbenice.html", nam=nam, dob=dobavljaci)
+
+
+@views.route("narudzbenice/cijena", methods=['POST'])
+def get_cijena():
+    identifiers = json.loads(request.data)
+    nam_id = int(identifiers["namId"])
+    dob_id = int(identifiers["dobId"])
+    index = identifiers["index"]  # vjerojatno nepotrebno ovdje
+
+    cijena = orm.select(x.cijena for x in Katalog if x.dobavljac.id ==
+                        dob_id and x.namirnica.id == nam_id)[:][0]
+
+    return jsonify({'nam': nam_id, "dob": dob_id, "index": index, "cijena": cijena})
+
+
+# postavke kako bi pdfkit radio
+path_wkhtmltopdf = r'C:\App\wkhtmltopdf\bin\wkhtmltopdf.exe'
+config = pdfkit.configuration(wkhtmltopdf=path_wkhtmltopdf)
+options = {'enable-local-file-access': None}
+
+
+@views.route("narudzbenice/pdf", methods=['GET', 'POST'])
+def create_pdf():
+    pdf = request.form.to_dict(flat=False)
+
+    lista_stavki = []
+
+    for stavka in range(len(pdf["nam"])):
+        nd = {}
+        nd["id"] = stavka + 1
+        nd["nam"] = pdf["nam"][stavka]
+        nd["kol"] = pdf["kolicina"][stavka]
+        nd["mj"] = pdf["mj"][stavka]
+        nd["dob"] = Dobavljac[pdf["dobavljac"][stavka]].naziv
+        nd["cij"] = pdf["cijena"][stavka]
+        kol = Decimal(f'{pdf["kolicina"][stavka]}')
+        cijena = Decimal(f'{ pdf["cijena"][stavka]}')
+        nd["tot"] = round(cijena * kol, 2)
+        lista_stavki.append(nd)
+
+    ukupni_iznos = 0
+    for stavka in lista_stavki:
+        cijena = Decimal(f'{stavka["tot"]}')
+        ukupni_iznos += cijena
+    print(ukupni_iznos)
+    id_narudzbenice = round(random.uniform(1, 200))
+    render_html = render_template(
+        "print-pdf.html", pdf=lista_stavki, tot=ukupni_iznos, narudzbenica_id=id_narudzbenice)
+    pdf = pdfkit.from_string(
+        render_html, configuration=config, options=options)
+    response = make_response(pdf)
+    response.headers['Content-Type'] = 'application/pdf'
+    response.headers['Content-Disposition'] = 'inline; filename=output.pdf'
+    return response
+    # return render_template("print-pdf.html", pdf=lista_stavki, tot=ukupni_iznos, narudzbenica_id = id_narudzbenice)

@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% block content %}
+    <h1 class="mb-4">Narudzbenica broj 237</h1>
+    <table id="to-pdf" class="table">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Namirnica</th>
+                <th scope="col">Kolicina</th>
+                <th scope="col">Mjerna jedinica</th>
+                <th scope="col">Dobavljac</th>
+                <th scope="col">Cijena/kg</th>
+            </tr>
+        </thead>
+        <tbody>
+            <form id="form-print" action="narudzbenice/pdf" method="POST">
+                {% for nam in nam %}
+                    <tr>
+                        <th scope="row">{{ loop.index }}</th>
+                        <td>
+                            {{ nam.nam_id.ime_namirnice }}
+                            <input type="hidden"
+                                   class="form-control"
+                                   name="nam"
+                                   value="{{ nam.nam_id.ime_namirnice }}"
+                                   readonly>
+                        </td>
+                        <td>
+                            <div >
+                                {{ nam.kolicina }}
+                                <input type="hidden"
+                                       class="form-control"
+                                       name="kolicina"
+                                       value="{{ nam.kolicina }}"
+                                       readonly>
+                            </div>
+                        </td>
+                        <td>
+                            <div >
+                                {{ nam.nam_id.mjerna_jedinica }}
+                                <input type="hidden"
+                                       class="form-control"
+                                       name="mj"
+                                       value="{{ nam.nam_id.mjerna_jedinica }}"
+                                       readonly>
+                            </div>
+                        </td>
+                        <td>
+                            <div >
+                                <select class="form-select"
+                                        name="dobavljac"
+                                        onchange="getCijena( '{{ nam.nam_id.id }}', this , '{{ loop.index }}')"
+                                        required>
+                                    <option value="" selected>
+                                        Odaberi...
+                                    </option>
+                                    {% for dob in dob %}
+                                        <option value="{{ dob.id }}">
+                                            {{ dob.naziv }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="col-3">
+                                <input class="form-control"
+                                       id="cijena{{ loop.index }}"
+                                       name="cijena"
+                                       type="text"
+                                       readonly>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+                <tfoot>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td class="text-end">
+                            <button id="submitBtn" type="submit" class="btn btn-success">Ispisi narudzbu</button>
+                        </td>
+                    </tr>
+                </tfoot>
+            </form>
+        </tbody>
+    </table>
+{% endblock %}
+{% block chart %}
+    <script>
+        function getCijena(nam, dob, index) {
+            fetch("narudzbenice/cijena", {
+                method: "POST",
+                body: JSON.stringify({ namId: nam, dobId: dob.value, index: index })
+            }).then(function (response) {
+                response.json().then(function (data) {
+                    console.log(data)
+                    let cijena = document.getElementById(`cijena${index}`)
+                    cijena.setAttribute("value", data.cijena)            
+            })
+        })
+        }
+    </script>
+{% endblock %}

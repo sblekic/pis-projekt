@@ -19,8 +19,8 @@
             <!-- namirnica -->
             <div class="col-5">
                 <label for="inputState" class="form-label">Namirnica</label>
-                <select id="inputState" class="form-select" name="imeNam">
-                    <option selected>
+                <select id="inputState" class="form-select" name="imeNam" required>
+                    <option value="" selected>
                         Odaberi...
                     </option>
                     {% for nam in namirnice %}
@@ -33,7 +33,7 @@
             <!-- kolicina nam -->
             <div class="col-2">
                 <label for="kolNam" class="form-label">Kolicina</label>
-                <input class="form-control" id="kolNam" name="kolNam">
+                <input class="form-control" id="kolNam" name="kolNam" required>
             </div>
             <!-- mjerna jedinica -->
             <div class="col-2">

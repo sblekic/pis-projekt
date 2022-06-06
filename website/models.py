@@ -104,8 +104,20 @@ def populate_database():
             Normativ(jelo_id=Jelo[jelo], namirnica_id=Namirnica[nam.pop()], kolicina_nam=Decimal(
                 f'{round(random.uniform(0.04, 1), 3)}'))
 
+    dobavljaci = ['Gabriele Group',
+                  'Carvelli - Di Giuseppe',
+                  'Lanteri - Quarta',
+                  'Panzeri, Ferro and Zani']
 
-# n1 = Narudzba(datum_kreiranja=str2datetime(
-#     '2013-03-15 23:15:00'), status=novo)
-# s1 = Stavka(narudzba_id=n1, jelo_id=j1, kolicina=2)
-# s1 = Stavka(narudzba_id=n1, jelo_id=j2, kolicina=3)
+    for d in dobavljaci:
+        Dobavljac(naziv=f"{d}")
+
+    cijene_nam = []
+
+    for i in range(len(lista_nam)):
+        cijene_nam.append(round(random.uniform(20, 200), 2))
+
+    for dob in range(1, len(dobavljaci) + 1):
+        for nam in range(1, len(lista_nam) + 1):
+            Katalog(dobavljac=Dobavljac[dob], namirnica=Namirnica[nam],
+                    cijena=Decimal(f"{cijene_nam[nam-1]}") * Decimal(f"{round(random.uniform(1.1, 1.4), 2)}"))

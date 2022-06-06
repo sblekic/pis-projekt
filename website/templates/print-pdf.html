@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block content %}
+    <h1 class="mb-4">Narudzbenica broj 237</h1>
+    <table class="table">
+        <thead>
+            <tr>
+                <th style="text-align: left" scope="col">#</th>
+                <th style="text-align: left" scope="col">Stavka</th>
+                <th style="text-align: left" scope="col">Kolicina</th>
+                <th style="text-align: left" scope="col">Mjerna jedinica</th>
+                <th style="text-align: left" scope="col">Dobavljac</th>
+                <th style="text-align: left" scope="col">Cijena/kg</th>
+                <th style="text-align: left" scope="col">Cijena</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for stavka in pdf %}
+                <tr>
+                    <th scope="row">{{ loop.index }}</th>
+                    <td>{{ stavka["nam"] }}</td>
+                    <td>{{ stavka["kol"] }}</td>
+                    <td>{{ stavka["mj"] }}</td>
+                    <td>{{ stavka["dob"] }}</td>
+                    <td>{{ stavka["cij"] }}</td>
+                    <td>{{ stavka["tot"] }}kn</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+        <tfoot>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>Ukupno {{ tot }} HRK</td>
+            </tr>
+        </tfoot>
+    </table>
+{% endblock %}
