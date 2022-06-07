@@ -6,8 +6,6 @@ from .procedures import *
 from pony import orm
 import json
 from decimal import Decimal
-import pdfkit
-import random
 
 views = Blueprint('views', __name__)
 
@@ -178,12 +176,6 @@ def get_cijena():
     return jsonify({'nam': nam_id, "dob": dob_id, "index": index, "cijena": cijena})
 
 
-# postavke kako bi pdfkit radio
-path_wkhtmltopdf = r'C:\App\wkhtmltopdf\bin\wkhtmltopdf.exe'
-config = pdfkit.configuration(wkhtmltopdf=path_wkhtmltopdf)
-options = {'enable-local-file-access': None}
-
-
 @views.route("narudzbenice/pdf", methods=['GET', 'POST'])
 def create_pdf():
     # elementi imaju isti name pa mi treba polje sa vrijednostima
@@ -208,12 +200,4 @@ def create_pdf():
     for stavka in lista_stavki:
         cijena = Decimal(f'{stavka["tot"]}')
         ukupni_iznos += cijena
-    render_html = render_template(
-        "print-pdf.html", pdf=lista_stavki, tot=ukupni_iznos)
-    pdf = pdfkit.from_string(
-        render_html, configuration=config, options=options)
-    response = make_response(pdf)
-    response.headers['Content-Type'] = 'application/pdf'
-    response.headers['Content-Disposition'] = 'inline; filename=output.pdf'
-    return response
-    # return render_template("print-pdf.html", pdf=lista_stavki, tot=ukupni_iznos, narudzbenica_id = id_narudzbenice)
+    return render_template("print-pdf.html", pdf=lista_stavki, tot=ukupni_iznos)

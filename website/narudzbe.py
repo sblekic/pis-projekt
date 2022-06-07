@@ -46,7 +46,7 @@ for i in range(1, 13):
         "datum": str(datetime.now() + timedelta(days=i*round(random.uniform(1, 10)))),
         "status": status[round(random.uniform(0, 3))]
     }
-    r = requests.post("http://127.0.0.1:5000/narudzbe/dolazne", json=req_json)
+    r = requests.post("http://127.0.0.1:8080/narudzbe/dolazne", json=req_json)
 print(r.json())
 
 

@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block title %}Dashboard{% endblock %}
 {% block content %}
-    {{x}} {{y }}
+    <h1 class="mb-4">Namirnice na zalihi</h1>
     <div>
         <canvas id="myChart"></canvas>
     </div>
@@ -12,9 +12,11 @@
         const data_db = {{values_db|safe}}
         const backColor = []
         for (i=0; i < data_db.length; i++) {
-            if (data_db[i] < 3) { backColor.push('red')};
-            if (data_db[i] >= 3 && data_db[i] < 5) { backColor.push('yellow')};
-            if (data_db[i] > 5) { backColor.push('green')};
+            if (data_db[i] < 3) { 
+                backColor.push('red')
+            } else if (data_db[i] >= 3 && data_db[i] < 5) { 
+                backColor.push('yellow')
+            } else { backColor.push('green')}
         }
 
         const data = {
