@@ -12,20 +12,15 @@ import random
 views = Blueprint('views', __name__)
 
 
-@views.route('/chartJs')
-def chart_js():
-    # testiram vizualizaciju iz chartjs-a
-    x = ['assigned', 'closed', 'new']
-    y = [4, 7, 11]
-    z = 69
-    return render_template("chart-js.html", x=x, y=y, z=z)
-
-
 @views.route('/')
-def home():
-    # za sada koristim za testiranje
-
-    return render_template("dashboard.html")
+def chart_js():
+    nam_db = orm.select(x for x in Namirnica)[:]
+    labels = []
+    values = []
+    for nam in nam_db:
+        labels.append(nam.ime_namirnice)
+        values.append(float(nam.stanje_namirnice))
+    return render_template("chart-js.html", labels_db=labels, values_db=values)
 
 
 @views.route('/namirnice', methods=['GET'])
@@ -191,6 +186,7 @@ options = {'enable-local-file-access': None}
 
 @views.route("narudzbenice/pdf", methods=['GET', 'POST'])
 def create_pdf():
+    # elementi imaju isti name pa mi treba polje sa vrijednostima
     pdf = request.form.to_dict(flat=False)
 
     lista_stavki = []
@@ -212,10 +208,8 @@ def create_pdf():
     for stavka in lista_stavki:
         cijena = Decimal(f'{stavka["tot"]}')
         ukupni_iznos += cijena
-    print(ukupni_iznos)
-    id_narudzbenice = round(random.uniform(1, 200))
     render_html = render_template(
-        "print-pdf.html", pdf=lista_stavki, tot=ukupni_iznos, narudzbenica_id=id_narudzbenice)
+        "print-pdf.html", pdf=lista_stavki, tot=ukupni_iznos)
     pdf = pdfkit.from_string(
         render_html, configuration=config, options=options)
     response = make_response(pdf)

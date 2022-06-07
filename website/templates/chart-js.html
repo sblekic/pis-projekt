@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
 {% block content %}
     {{x}} {{y }}
     <div>
@@ -7,27 +8,38 @@
 {% endblock %}
 {% block chart %}
     <script>
-        var x= {{x|safe}}
-        console.log(x)
-        const labels = ["January", "February", "March", "April", "May", "June"];
+        const labels_db = {{labels_db|safe}}
+        const data_db = {{values_db|safe}}
+        const backColor = []
+        for (i=0; i < data_db.length; i++) {
+            if (data_db[i] < 3) { backColor.push('red')};
+            if (data_db[i] >= 3 && data_db[i] < 5) { backColor.push('yellow')};
+            if (data_db[i] > 5) { backColor.push('green')};
+        }
 
         const data = {
-        labels: labels,
+        labels: labels_db,
         datasets: [
             {
-            label: "My First dataset",
-            backgroundColor: "rgb(255, 99, 132)",
-            borderColor: "rgb(255, 99, 132)",
-            data: [0, 10, 5, 2, 20, 30, 45],
+            label: "Stanje na zalihu",
+            backgroundColor: backColor,
+            //borderColor: "rgb(255, 99, 132)",
+            data: data_db
             },
         ],
         };
 
         const config = {
-        type: "line",
+        type: "bar",
         data: data,
-        options: {},
-        };
+        options: {
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
+        }
 
         const myChart = new Chart(document.getElementById("myChart"), config);
     </script>
