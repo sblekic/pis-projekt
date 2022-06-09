@@ -75,9 +75,8 @@ def nabavna_lista_by_narudzba(narudzba):
                 dict_index = next((index for (index, d) in enumerate(
                     nabava) if d["nam_id"] == normativ["namirnica_id"].id), None)
                 if next((item for item in nabava if item['nam_id'] == normativ["namirnica_id"].id), None) is not None:
-                    # ako je pronadena namirnica u dictionary, dodaj kolicinu
-                    nabava[dict_index]["kolicina"] += normativ["kolicina_nam"] * \
-                        stavka["kolicina"]
+                    # ako je pronadena namirnica u listu dictionary-a nabava, dodaj kolicinu na tom indeksu
+                    nabava[dict_index]["kolicina"] += nd["kolicina"]
                 else:
                     nabava.append(nd)
     return nabava

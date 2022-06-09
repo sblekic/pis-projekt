@@ -2,18 +2,6 @@
 {# pregled postojecih i unos namirnica #}
 {% block title %}Namirnice{% endblock %}
 {% block content %}
-    {#
-    <div class="row mb-4 align-bottom">
-        <div class="col-4">
-            <h1>Nabava namirnica</h1>
-        </div>
-        <div class="col">
-            <a class="btn btn-success mt-2"
-               href="{{ url_for('views.narudzbenice')}}"
-               role="button">Nova narudzbenica</a>
-        </div>
-    </div>
-    #}
     <div class="row mb-4">
         <div class="col-5">
             <h1>Zaprimanje namirnica</h1>
@@ -176,9 +164,7 @@
                                 </div>
                                 <!-- mjerna jedinica -->
                                 <div class="col-2">
-                                    <label class="form-label">
-                                        Mjerna jedinica
-                                    </label>
+                                    <label class="form-label">Mjerna jedinica</label>
                                     <input class="form-control"
                                            type="text"
                                            value="{{ nam.mjerna_jedinica }}"
@@ -187,9 +173,7 @@
                                            readonly>
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                                        Zatvori
-                                    </button>
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zatvori</button>
                                     <button id="edit-namirnica" type="submit" class="btn btn-primary">
                                         Azuriraj
                                     </button>

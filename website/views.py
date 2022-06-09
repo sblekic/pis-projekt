@@ -5,6 +5,7 @@ from .models import *
 from .procedures import *
 from pony import orm
 import json
+import math
 from decimal import Decimal
 
 views = Blueprint('views', __name__)
@@ -101,7 +102,6 @@ def dodaj_normativ(jelo_id):
 @views.route("/narudzbe")
 def narudzbe():
     narudzbe = get_narudzbe()
-    print("\n", narudzbe)
     return render_template("narudzbe.html", narudzbe=narudzbe)
 
 
@@ -134,9 +134,9 @@ def detalji_narudzbe(narudzba_id):
                 Namirnica[nam_id].stanje_namirnice = Decimal("0")
                 if find_nabava_el(nam_id):
                     # zaokruzim na int jer necu kupiti 2.5 komada necega
-                    Nabava[nam_id].kolicina += round(abs(rez))
+                    Nabava[nam_id].kolicina += math.ceil(abs(rez))
                 else:
-                    Nabava(nam_id=nam_id, kolicina=round(abs(rez)))
+                    Nabava(nam_id=nam_id, kolicina=math.ceil(abs(rez)))
             # ako je rezultat pozitivan oduzmi sa skladista
             else:
                 Namirnica[nam_id].stanje_namirnice = rez
